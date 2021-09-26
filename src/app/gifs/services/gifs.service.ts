@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Gif, SearchGifsResponse } from '../interface/gifs.interface';
 
 @Injectable({
   providedIn: 'root' //Esto es para que angular maneje este servicio a nivel global sin necesidad de agragarlo a ningun modulo
@@ -9,6 +10,9 @@ export class GifsService {
   private apiKey: string = 'upAiLlEj6Z7RQeBiEMAq7geKpZX4JAwy';
   private _historial: string[] = [];
 
+  //TODO: Cambiar Any por su tipo correspondiente
+  public resultados:Gif[]=[];
+
   get historial(): any[] {
 
     return [...this._historial]; //Ropiendo la referencia con el operador spread
@@ -17,6 +21,10 @@ export class GifsService {
   constructor(private http:HttpClient){}
 
   buscargifs(query: string = '') {
+
+    
+
+    console.log('query',query)
 
     query = query.trim().toLowerCase();
 
@@ -34,10 +42,14 @@ export class GifsService {
         })
       }) */
 
-      this.http.get('http://api.giphy.com/v1/gifs/search?api_key=upAiLlEj6Z7RQeBiEMAq7geKpZX4JAwy&q=dragon ball z&limit=10')
-      .subscribe((resp: any) =>{
+      this.http.get<SearchGifsResponse>(`http://api.giphy.com/v1/gifs/search?api_key=upAiLlEj6Z7RQeBiEMAq7geKpZX4JAwy&q= ${query} &limit=10`)
+      .subscribe((resp) =>{
 
         console.log(resp.data);
+
+        this.resultados = resp.data;
+
+        
 
       });
   }
