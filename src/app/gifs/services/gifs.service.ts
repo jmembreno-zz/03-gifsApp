@@ -18,7 +18,17 @@ export class GifsService {
     return [...this._historial]; //Ropiendo la referencia con el operador spread
   }
 
-  constructor(private http:HttpClient){}
+  constructor(private http:HttpClient){
+  
+    this._historial = JSON.parse(localStorage.getItem('historial')!) || [];
+
+  //  if(localStorage.getItem('historial')){
+  //   this._historial = JSON.parse(localStorage.getItem('historial')!);
+
+  //  }
+
+
+  }
 
   buscargifs(query: string = '') {
 
@@ -32,6 +42,7 @@ export class GifsService {
 
       this._historial.unshift(query); //Inserta el nuevo elemento al principio del arreglo mientras push lo manda al final
       this._historial = this._historial.splice(0, 10);//con splice el arreglo no tendra mas de 10 elementos
+      localStorage.setItem('historial', JSON.stringify(this._historial));
 
     }
 
