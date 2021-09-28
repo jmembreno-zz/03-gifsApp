@@ -16,7 +16,9 @@ export class SidebarComponent  {
     return this.gifservice.historial;
   }
 
-
+buscar(titulo:string){
+    this.gifservice.buscargifs(titulo);
+}
 
  
 }

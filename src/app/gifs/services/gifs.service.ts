@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Gif, SearchGifsResponse } from '../interface/gifs.interface';
 
@@ -8,33 +8,34 @@ import { Gif, SearchGifsResponse } from '../interface/gifs.interface';
 export class GifsService {
 
   private apiKey: string = 'upAiLlEj6Z7RQeBiEMAq7geKpZX4JAwy';
+  private servicioUrl: string = 'http://api.giphy.com/v1/gifs';
+
   private _historial: string[] = [];
 
   //TODO: Cambiar Any por su tipo correspondiente
-  public resultados:Gif[]=[];
+  public resultados: Gif[] = [];
+
 
   get historial(): any[] {
 
     return [...this._historial]; //Ropiendo la referencia con el operador spread
   }
 
-  constructor(private http:HttpClient){
-  
+  constructor(private http: HttpClient) {
+
     this._historial = JSON.parse(localStorage.getItem('historial')!) || [];
+    this.resultados = JSON.parse(localStorage.getItem('data')!) || [];
 
-  //  if(localStorage.getItem('historial')){
-  //   this._historial = JSON.parse(localStorage.getItem('historial')!);
+    //  if(localStorage.getItem('historial')){
+    //   this._historial = JSON.parse(localStorage.getItem('historial')!);
 
-  //  }
+    //  }
 
 
   }
 
   buscargifs(query: string = '') {
 
-    
-
-    console.log('query',query)
 
     query = query.trim().toLowerCase();
 
@@ -46,21 +47,23 @@ export class GifsService {
 
     }
 
-    /* fetch('http://api.giphy.com/v1/gifs/search?api_key=upAiLlEj6Z7RQeBiEMAq7geKpZX4JAwy&q=dragon ball z&limit=10')
-      .then(resp => {
-        resp.json().then(data => {
-          console.log(data);
-        })
-      }) */
+    const params = new HttpParams()
+      .set('api_key', this.apiKey)
+      .set('limit', '10')
+      .set('q', query);
 
-      this.http.get<SearchGifsResponse>(`http://api.giphy.com/v1/gifs/search?api_key=upAiLlEj6Z7RQeBiEMAq7geKpZX4JAwy&q= ${query} &limit=10`)
-      .subscribe((resp) =>{
+    console.log('Parametros', params);
+
+
+    this.http.get<SearchGifsResponse>(`${this.servicioUrl}/search`, { params: params })
+      .subscribe((resp) => {
 
         console.log(resp.data);
 
         this.resultados = resp.data;
+        localStorage.setItem('data', JSON.stringify(this.resultados));
 
-        
+
 
       });
   }
